@@ -4,191 +4,154 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<title>Hasans Dashboard</title>
+<title>Home Office</title>
 <style>
-html,body{margin:0;width:100%;height:100%;background:#0b0c0e;color:#f5f5f7;font-family:Arial,"Helvetica Neue",sans-serif;overflow:hidden}
-*{box-sizing:border-box}.app{padding:18px 22px}.head{height:132px;border-bottom:1px solid #2b2d31;position:relative}
-#clock{font-size:76px;font-weight:200;line-height:82px}.date{font-size:18px;color:#b9bbc1}.weather{position:absolute;right:0;top:7px;text-align:right}
-#temp{font-size:46px}.sub{color:#a5a8af;font-size:14px}.cols{display:table;width:100%;table-layout:fixed}
-.col{display:table-cell;vertical-align:top;padding-top:18px}.left{width:55%;padding-right:20px;border-right:1px solid #2b2d31}.right{width:45%;padding-left:20px}
-.label{font-size:11px;letter-spacing:1.5px;color:#81858d;text-transform:uppercase;margin-bottom:10px}
-.forecast{display:table;width:100%;margin-bottom:18px}.day{display:table-cell;width:33%}.day b{font-size:20px}.day span{display:block;color:#999da5;font-size:12px;margin-bottom:5px}
-.prayerHero{background:#15171a;border:1px solid #2b2d31;border-radius:13px;padding:13px 15px;margin-bottom:13px}
-#nextPrayer{font-size:25px}#countdown{font-size:14px;color:#b8bbc1;margin-top:4px}
-.prayers{width:100%;border-collapse:collapse;font-size:14px}.prayers td{padding:7px 2px;border-bottom:1px solid #24262a}.prayers td:last-child{text-align:right;font-size:17px}
-.calTitle{font-size:23px;margin-bottom:8px}.cal{width:100%;border-collapse:collapse;text-align:center}.cal th{font-size:10px;color:#7e828a;font-weight:normal;padding:4px}.cal td{height:29px;font-size:14px}.today span{display:inline-block;width:27px;height:27px;line-height:27px;border-radius:50%;background:#f5f5f7;color:#0b0c0e}
-.dim{color:#4e5158}.noteLabel{margin-top:17px}textarea{width:100%;height:64px;background:#15171a;color:#fff;border:1px solid #2b2d31;border-radius:9px;padding:9px;font-size:14px;resize:none}
-.foot{position:absolute;bottom:6px;right:14px;font-size:9px;color:#555a62}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,"Helvetica Neue",sans-serif}
+body{background:#0a0b0d;color:#f7f7f8}
+body.light{background:#f4f5f7;color:#111214}
+.app{height:100%;padding:22px 26px}
+.top{height:112px;border-bottom:1px solid #292c31;position:relative}
+body.light .top{border-color:#d7d9dd}
+.time{font-size:74px;line-height:72px;font-weight:200;letter-spacing:-3px}
+.date{font-size:16px;margin-top:9px;opacity:.62}
+.topRight{position:absolute;right:0;top:2px;text-align:right}
+.city button,.theme button,.clockButton{font-size:11px;padding:6px 9px;margin-left:4px;border-radius:8px;border:1px solid #343840;background:#14161a;color:#aeb2b9}
+.city button.active,.theme button.active{color:#fff;border-color:#727780}
+body.light .city button,body.light .theme button,body.light .clockButton{background:#fff;color:#686b70;border-color:#d0d2d6}
+body.light .city button.active,body.light .theme button.active{color:#111;border-color:#777}
+.clockButton{margin-top:10px;font-size:12px}
+.grid{display:table;width:100%;table-layout:fixed;padding-top:22px}
+.left,.right{display:table-cell;vertical-align:top;width:50%}
+.left{padding-right:28px}.right{padding-left:28px;border-left:1px solid #292c31}
+body.light .right{border-color:#d7d9dd}
+.eyebrow{font-size:10px;letter-spacing:1.7px;text-transform:uppercase;opacity:.48;margin-bottom:10px}
+.temp{font-size:62px;line-height:62px;font-weight:200;letter-spacing:-3px}
+.condition{font-size:17px;margin-top:5px;opacity:.68}
+.range{font-size:13px;margin-top:7px;opacity:.5}
+.forecast{display:table;width:100%;margin-top:28px}
+.day{display:table-cell;width:33.33%;padding-right:10px}
+.dayName{font-size:11px;opacity:.45}.dayTemp{font-size:23px;margin-top:5px}.daySub{font-size:11px;opacity:.45;margin-top:3px}
+.noteTitle{margin-top:28px}
+textarea{width:100%;height:80px;border:0;border-bottom:1px solid #33373d;background:transparent;color:inherit;font-size:14px;padding:8px 0;resize:none;outline:none}
+body.light textarea{border-color:#cfd1d5}
+.month{font-size:25px;margin-bottom:10px}
+.cal{width:100%;border-collapse:collapse;text-align:center}
+.cal th{font-size:9px;font-weight:normal;opacity:.38;padding:5px}
+.cal td{height:32px;font-size:13px}
+.cal .dim{opacity:.2}.cal .today span{display:inline-block;width:28px;height:28px;line-height:28px;border-radius:50%;background:#f5f5f7;color:#111}
+body.light .cal .today span{background:#111;color:#fff}
+.updated{position:absolute;right:24px;bottom:8px;font-size:8px;opacity:.25}
 
-/* Vollbild-Uhr + automatische Tag/Nacht-Darstellung */
-body.light{background:#f3f4f6;color:#111214}
-body.light .head,body.light .left{border-color:#d8d9dd}
-body.light .sub,body.light .date{color:#62656c}
-body.light .label{color:#6f737a}
-body.light .prayerHero,body.light textarea{background:#fff;color:#111;border-color:#d8d9dd}
-body.light .prayers td{border-color:#ddd}
-.modeBtn{position:absolute;right:18px;bottom:12px;border:1px solid #3b3e44;background:#17191d;color:#fff;border-radius:9px;padding:8px 11px;font-size:13px;z-index:5}
-body.light .modeBtn{background:#fff;color:#111;border-color:#ccc}
-#clockMode{display:none;position:fixed;left:0;top:0;width:100%;height:100%;z-index:50;background:#08090a;text-align:center}
-#clockMode.lightClock{background:#f7f7f7}
-#bigClockWrap{position:absolute;left:0;top:50%;width:100%;margin-top:-145px}
-#bigClock{font-size:190px;font-weight:200;letter-spacing:-8px;line-height:195px;white-space:nowrap}
-#bigDate{font-size:24px;margin-top:8px;opacity:.72}
-#bigPrayer{font-size:18px;margin-top:16px;opacity:.72}
-#clockControls{position:absolute;left:0;bottom:22px;width:100%;text-align:center}
-.colorDot{display:inline-block;width:27px;height:27px;border-radius:50%;margin:0 6px;border:2px solid rgba(255,255,255,.45);vertical-align:middle}
-.lightClock .colorDot{border-color:rgba(0,0,0,.25)}
-#closeClock{display:inline-block;margin-left:14px;padding:7px 11px;border:1px solid #555;border-radius:8px;font-size:12px;opacity:.8}
-
-
-#fontPicker{display:inline-block;margin-left:12px;padding:7px 9px;border:1px solid #555;border-radius:8px;background:#17191d;color:#fff;font-size:12px}
-.lightClock #fontPicker{background:#fff;color:#111;border-color:#bbb}
-@media (max-width:800px){#bigClock{font-size:165px;line-height:170px}}
-
-
-.themeBtns{position:absolute;right:112px;bottom:12px;z-index:6}
-.themeBtns button{margin-left:4px;border:1px solid #3b3e44;background:#17191d;color:#fff;border-radius:8px;padding:7px 9px;font-size:12px}
-body.light .themeBtns button{background:#fff;color:#111;border-color:#ccc}
-.left{width:55%}.right{width:45%}
-.noteLabel{margin-top:28px}
-textarea{height:105px}
-
-.citySwitch{margin-bottom:3px}.citySwitch button{border:1px solid #3b3e44;background:#17191d;color:#aaa;border-radius:7px;padding:4px 7px;margin-left:4px;font-size:10px}
-.citySwitch button.active{color:#fff;border-color:#777}
-body.light .citySwitch button{background:#fff;color:#777;border-color:#ccc}body.light .citySwitch button.active{color:#111;border-color:#777}
-#bigWeather{font-size:18px;margin-top:12px;opacity:.72}
-.sizeCtl{display:inline-block;padding:7px 9px;margin-left:5px;border:1px solid #555;border-radius:8px;font-size:12px}
+/* fullscreen clock */
+#clockMode{display:none;position:fixed;z-index:50;left:0;top:0;width:100%;height:100%;background:#070809;color:#fff;text-align:center}
+#clockMode.lightClock{background:#f7f7f8;color:#111}
+.clockCenter{position:absolute;left:0;top:50%;width:100%;margin-top:-145px}
+#bigClock{font-size:210px;line-height:215px;font-weight:200;letter-spacing:-9px;white-space:nowrap}
+#bigDate{font-size:22px;opacity:.58;margin-top:4px}
+#bigWeather{font-size:16px;opacity:.45;margin-top:12px}
+#clockControls{position:absolute;left:0;bottom:20px;width:100%;transition:opacity .3s}
+#clockControls.hidden{opacity:0}
+.dot{display:inline-block;width:25px;height:25px;border-radius:50%;margin:0 5px;border:2px solid rgba(255,255,255,.3);vertical-align:middle}
+.lightClock .dot{border-color:rgba(0,0,0,.2)}
+.ctrl,#fontPicker{display:inline-block;padding:7px 9px;margin-left:5px;border:1px solid #4a4d52;border-radius:8px;background:transparent;color:inherit;font-size:11px}
+#fontPicker option{color:#111}
+@media(max-width:800px){#bigClock{font-size:185px;line-height:190px}.app{padding:18px 20px}.left{padding-right:20px}.right{padding-left:20px}}
 </style>
 </head>
-<body><div class="app">
-<div class="head"><div id="clock">--:--</div><button class="modeBtn" onclick="openClock()">Große Uhr</button><div class="themeBtns"><button onclick="setThemeMode('light')">☀</button><button onclick="setThemeMode('dark')">☾</button><button onclick="setThemeMode('auto')">A</button></div><div class="date" id="dateLine"></div>
-<div class="weather"><div class="citySwitch"><button id="cityKoeln" onclick="setCity('koeln')">Köln</button><button id="cityFrankfurt" onclick="setCity('frankfurt')">Frankfurt</button></div><div id="temp">--°</div><div class="sub" id="weatherText">Wetter lädt…</div></div></div>
-<div class="cols">
-<div class="col left">
-<div class="label" id="weatherLabel">Wetter</div><div class="forecast" id="forecast"></div>
-<div class="label noteLabel">Heute wichtig</div><textarea id="note" placeholder="Kurze Notiz …"></textarea>
+<body>
+<div class="app">
+ <div class="top">
+  <div class="time" id="clock">--:--</div>
+  <div class="date" id="dateLine"></div>
+  <div class="topRight">
+   <div class="city"><button id="cityKoeln" onclick="setCity('koeln')">Köln</button><button id="cityFrankfurt" onclick="setCity('frankfurt')">Frankfurt</button></div>
+   <div class="theme" style="margin-top:7px"><button id="thLight" onclick="setTheme('light')">☀</button><button id="thAuto" onclick="setTheme('auto')">Auto</button><button id="thDark" onclick="setTheme('dark')">☾</button></div>
+   <button class="clockButton" onclick="openClock()">Große Uhr</button>
+  </div>
+ </div>
+ <div class="grid">
+  <div class="left">
+   <div class="eyebrow" id="weatherTitle">Wetter</div>
+   <div class="temp" id="temp">--°</div>
+   <div class="condition" id="condition">Daten werden geladen</div>
+   <div class="range" id="range"></div>
+   <div class="forecast" id="forecast"></div>
+   <div class="eyebrow noteTitle">Heute wichtig</div>
+   <textarea id="note" placeholder="Kurze Notiz …"></textarea>
+  </div>
+  <div class="right">
+   <div class="eyebrow">Kalender</div>
+   <div class="month" id="monthTitle"></div>
+   <table class="cal"><thead><tr><th>MO</th><th>DI</th><th>MI</th><th>DO</th><th>FR</th><th>SA</th><th>SO</th></tr></thead><tbody id="calBody"></tbody></table>
+  </div>
+ </div>
+ <div class="updated" id="updated"></div>
 </div>
-<div class="col right"><div class="label">Kalender</div><div class="calTitle" id="monthTitle"></div>
-<table class="cal"><thead><tr><th>MO</th><th>DI</th><th>MI</th><th>DO</th><th>FR</th><th>SA</th><th>SO</th></tr></thead><tbody id="calBody"></tbody></table>
-</div></div><div class="foot" id="updated"></div></div>
-<script id="embeddedDashboardData">var DASHBOARD_DATA={"updated":"30.09. 00:01","cities":{"koeln":{"weather":{"current":21.6,"text":"Klar","days":[{"name":"Heute","max":28.5,"min":20.1,"rain":20},{"name":"Morgen","max":21.5,"min":15.7,"rain":80},{"name":"Übermorgen","max":19.4,"min":13.5,"rain":52}]},"sun":{"sunrise":"07:30","sunset":"19:12"}},"frankfurt":{"weather":{"current":19.0,"text":"Bewölkt","days":[{"name":"Heute","max":28.3,"min":15.6,"rain":0},{"name":"Morgen","max":20.1,"min":15.7,"rain":90},{"name":"Übermorgen","max":20.8,"min":12.2,"rain":53}]},"sun":{"sunrise":"07:23","sunset":"19:05"}}}};</script>
+
+<div id="clockMode" onclick="clockTap()">
+ <div class="clockCenter" id="clockCenter">
+  <div id="bigClock">--:--</div>
+  <div id="bigDate"></div>
+  <div id="bigWeather"></div>
+ </div>
+ <div id="clockControls" onclick="event.cancelBubble=true">
+  <span class="dot" style="background:#fff" onclick="setClockColor('#ffffff')"></span>
+  <span class="dot" style="background:#39ff72" onclick="setClockColor('#39ff72')"></span>
+  <span class="dot" style="background:#48a7ff" onclick="setClockColor('#48a7ff')"></span>
+  <span class="dot" style="background:#ff4b4b" onclick="setClockColor('#ff4b4b')"></span>
+  <span class="dot" style="background:#ffb13b" onclick="setClockColor('#ffb13b')"></span>
+  <span class="dot" style="background:#d17cff" onclick="setClockColor('#d17cff')"></span>
+  <span class="ctrl" onclick="changeSize(-10)">A−</span><span class="ctrl" onclick="changeSize(10)">A+</span>
+  <select id="fontPicker" onchange="setClockFont(this.value)">
+   <option value="helvetica">Helvetica</option><option value="arial">Arial</option><option value="georgia">Georgia</option><option value="times">Times</option><option value="courier">Courier</option><option value="trebuchet">Trebuchet</option>
+  </select>
+  <span class="ctrl" onclick="closeClock()">Dashboard</span>
+ </div>
+</div>
+
+<script id="embeddedDashboardData">var DASHBOARD_DATA=null;</script>
 <script>
 var DAYS=["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"],MONTHS=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
-function pad(n){return n<10?"0"+n:n} function wk(d){var x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()+3-(x.getDay()+6)%7);var w=new Date(x.getFullYear(),0,4);return 1+Math.round(((x-w)/86400000-3+(w.getDay()+6)%7)/7)}
-function tick(){var d=new Date();document.getElementById("clock").innerHTML=pad(d.getHours())+":"+pad(d.getMinutes());document.getElementById("dateLine").innerHTML=DAYS[d.getDay()]+" · "+d.getDate()+". "+MONTHS[d.getMonth()]+" "+d.getFullYear()+" · KW "+wk(d)}
-setInterval(tick,1000);tick();
-function cal(){var d=new Date(),y=d.getFullYear(),m=d.getMonth(),f=new Date(y,m,1),o=(f.getDay()+6)%7,n=1,nx=1,prev=new Date(y,m,0).getDate(),max=new Date(y,m+1,0).getDate(),s="";
-document.getElementById("monthTitle").innerHTML=MONTHS[m]+" "+y;for(var r=0;r<6;r++){s+="<tr>";for(var c=0;c<7;c++){var p=r*7+c,v,cl="";if(p<o){v=prev-o+p+1;cl="dim"}else if(n<=max){v=n;if(n==d.getDate())cl="today";n++}else{v=nx++;cl="dim"}s+='<td class="'+cl+'"><span>'+v+"</span></td>"}s+="</tr>"}document.getElementById("calBody").innerHTML=s}cal();
-function xhrJSON(url,ok,fail){var x=new XMLHttpRequest();x.onreadystatechange=function(){if(x.readyState==4){if(x.status>=200&&x.status<300){try{ok(JSON.parse(x.responseText))}catch(e){if(fail)fail()}}else if(fail)fail()}};x.open("GET",url+"?v="+new Date().getTime(),true);x.send()}
-var dashboardData=null;
-function getCity(){var c="koeln";try{c=localStorage.getItem("weatherCity")||c}catch(e){}return c}
-function setCity(c){try{localStorage.setItem("weatherCity",c)}catch(e){};renderSelectedCity()}
-function renderSelectedCity(){
- if(!dashboardData)return;
- var c=getCity(),j=dashboardData.cities[c],name=c=="frankfurt"?"Frankfurt":"Köln";
- if(!j)return;
- document.getElementById("temp").innerHTML=Math.round(j.weather.current)+"°";
- document.getElementById("weatherText").innerHTML=name+" · "+j.weather.text;
- document.getElementById("weatherLabel").innerHTML="Wetter · "+name;
- var s="",i,q;
- for(i=0;i<j.weather.days.length;i++){q=j.weather.days[i];s+='<div class="day"><span>'+q.name+'</span><b>'+Math.round(q.max)+'°</b><div class="sub">'+Math.round(q.min)+'° · Regen '+q.rain+'%</div></div>'}
- document.getElementById("forecast").innerHTML=s;
- sunData=j.sun||null;
- document.getElementById("updated").innerHTML="Daten: "+dashboardData.updated;
- document.getElementById("cityKoeln").className=c=="koeln"?"active":"";
- document.getElementById("cityFrankfurt").className=c=="frankfurt"?"active":"";
- applyAutoTheme();updateBigClock();
-}
-function renderDashboardData(j){
- try{if(!j||!j.cities)return false;dashboardData=j;renderSelectedCity();return true}catch(e){return false}
-}
-function load(){
- if(typeof DASHBOARD_DATA!="undefined" && DASHBOARD_DATA){
-  renderDashboardData(DASHBOARD_DATA);
-  return;
- }
- xhrJSON("data.json",function(j){renderDashboardData(j)},function(){
-  document.getElementById("weatherText").innerHTML="Köln · Daten nicht geladen";
- });
-}
-load();
-setInterval(load,1800000);
-
-function applyClockFont(){
- var v="helvetica";
- try{v=localStorage.getItem("clockFont")||v}catch(e){}
- var f='"Helvetica Neue",Helvetica,Arial,sans-serif';
- if(v=="arial")f='Arial,sans-serif';
- else if(v=="georgia")f='Georgia,serif';
- else if(v=="times")f='"Times New Roman",Times,serif';
- else if(v=="courier")f='"Courier New",Courier,monospace';
- else if(v=="trebuchet")f='"Trebuchet MS",Arial,sans-serif';
- document.getElementById("bigClock").style.fontFamily=f;
- var picker=document.getElementById("fontPicker");
- if(picker)picker.value=v;
-}
-
-function updateBigClock(){
- var d=new Date();
- document.getElementById("bigClock").innerHTML=pad(d.getHours())+":"+pad(d.getMinutes());
- document.getElementById("bigDate").innerHTML=DAYS[d.getDay()]+" · "+d.getDate()+". "+MONTHS[d.getMonth()]+" "+d.getFullYear();
- 
- var bw=document.getElementById("bigWeather");
- if(bw&&dashboardData){var c=getCity(),x=dashboardData.cities[c],nm=c=="frankfurt"?"Frankfurt":"Köln";if(x)bw.innerHTML=nm+" · "+Math.round(x.weather.current)+"° · "+x.weather.text}
- applyClockColor();applyClockFont();applyClockSize();
-}
-setInterval(updateBigClock,1000);updateBigClock();
-
-function toMinutes(v){if(!v)return null;var a=v.split(":");return parseInt(a[0],10)*60+parseInt(a[1],10)}
-function setThemeMode(v){
- try{localStorage.setItem("themeMode",v)}catch(e){}
- applyAutoTheme();
-}
-function applyAutoTheme(){
- var mode="auto";
- try{mode=localStorage.getItem("themeMode")||"auto"}catch(e){}
- var light=false;
- if(mode=="light")light=true;
- else if(mode=="dark")light=false;
- else{
-  if(!sunData){light=true}
-  else{
-   var d=new Date(),now=d.getHours()*60+d.getMinutes(),rise=toMinutes(sunData.sunrise),set=toMinutes(sunData.sunset);
-   light=!(now<rise || now>=set);
-  }
- }
- document.body.className=light?"light":"";
- var cm=document.getElementById("clockMode");
- if(cm)cm.className=light?"lightClock":"";
-}
-setInterval(applyAutoTheme,60000);
-
+var dashboardData=null,sunData=null,hideTimer=null;
+function pad(n){return n<10?"0"+n:n}
+function week(d){var x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()+3-(x.getDay()+6)%7);var w=new Date(x.getFullYear(),0,4);return 1+Math.round(((x-w)/86400000-3+(w.getDay()+6)%7)/7)}
+function tick(){var d=new Date(),t=pad(d.getHours())+":"+pad(d.getMinutes());document.getElementById("clock").innerHTML=t;document.getElementById("dateLine").innerHTML=DAYS[d.getDay()]+" · "+d.getDate()+". "+MONTHS[d.getMonth()]+" "+d.getFullYear()+" · KW "+week(d);updateBig()}
+setInterval(tick,1000);
+function calendar(){var d=new Date(),y=d.getFullYear(),m=d.getMonth(),first=new Date(y,m,1),off=(first.getDay()+6)%7,n=1,nx=1,prev=new Date(y,m,0).getDate(),max=new Date(y,m+1,0).getDate(),s="",r,c,p,v,cl;
+document.getElementById("monthTitle").innerHTML=MONTHS[m]+" "+y;
+for(r=0;r<6;r++){s+="<tr>";for(c=0;c<7;c++){p=r*7+c;cl="";if(p<off){v=prev-off+p+1;cl="dim"}else if(n<=max){v=n;if(n==d.getDate())cl="today";n++}else{v=nx++;cl="dim"}s+='<td class="'+cl+'"><span>'+v+"</span></td>"}s+="</tr>"}document.getElementById("calBody").innerHTML=s}
+function getStore(k,d){try{return localStorage.getItem(k)||d}catch(e){return d}}
+function setStore(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function getCity(){return getStore("weatherCity","koeln")}
+function setCity(c){setStore("weatherCity",c);renderCity()}
+function renderCity(){if(!dashboardData)return;var c=getCity(),x=dashboardData.cities[c],name=c=="frankfurt"?"Frankfurt":"Köln";if(!x)return;
+document.getElementById("temp").innerHTML=Math.round(x.weather.current)+"°";document.getElementById("condition").innerHTML=x.weather.text;document.getElementById("weatherTitle").innerHTML="Wetter · "+name;
+var d=x.weather.days[0];document.getElementById("range").innerHTML="H "+Math.round(d.max)+"° · T "+Math.round(d.min)+"° · Regen "+d.rain+"%";
+var s="",i,q;for(i=0;i<x.weather.days.length;i++){q=x.weather.days[i];s+='<div class="day"><div class="dayName">'+q.name+'</div><div class="dayTemp">'+Math.round(q.max)+'°</div><div class="daySub">'+Math.round(q.min)+'° · '+q.rain+'%</div></div>'}document.getElementById("forecast").innerHTML=s;
+sunData=x.sun;document.getElementById("cityKoeln").className=c=="koeln"?"active":"";document.getElementById("cityFrankfurt").className=c=="frankfurt"?"active":"";document.getElementById("updated").innerHTML="Aktualisiert "+dashboardData.updated;applyTheme();updateBig()}
+function renderData(j){if(!j||!j.cities)return;dashboardData=j;renderCity()}
+function xhrJSON(url,ok){var x=new XMLHttpRequest();x.onreadystatechange=function(){if(x.readyState==4&&(x.status>=200&&x.status<300)){try{ok(JSON.parse(x.responseText))}catch(e){}}};x.open("GET",url+"?v="+new Date().getTime(),true);x.send()}
+function load(){if(typeof DASHBOARD_DATA!="undefined"&&DASHBOARD_DATA&&DASHBOARD_DATA.cities)renderData(DASHBOARD_DATA);else xhrJSON("data.json",renderData)}
+function mins(v){if(!v)return 0;var a=v.split(":");return parseInt(a[0],10)*60+parseInt(a[1],10)}
+function setTheme(v){setStore("themeMode",v);applyTheme()}
+function applyTheme(){var m=getStore("themeMode","auto"),light=false;if(m=="light")light=true;else if(m=="dark")light=false;else if(sunData){var d=new Date(),n=d.getHours()*60+d.getMinutes();light=!(n<mins(sunData.sunrise)||n>=mins(sunData.sunset))}else light=true;
+document.body.className=light?"light":"";document.getElementById("clockMode").className=light?"lightClock":"";
+document.getElementById("thLight").className=m=="light"?"active":"";document.getElementById("thAuto").className=m=="auto"?"active":"";document.getElementById("thDark").className=m=="dark"?"active":""}
+function openClock(){document.getElementById("clockMode").style.display="block";showControls();updateBig()}
+function closeClock(){document.getElementById("clockMode").style.display="none"}
+function clockTap(){var c=document.getElementById("clockControls");if(c.className=="hidden")showControls();else hideControls()}
+function showControls(){var c=document.getElementById("clockControls");c.className="";if(hideTimer)clearTimeout(hideTimer);hideTimer=setTimeout(hideControls,5000)}
+function hideControls(){document.getElementById("clockControls").className="hidden"}
+function setClockColor(v){setStore("clockColor",v);applyClockStyle();showControls()}
+function changeSize(d){var n=parseInt(getStore("clockSize","210"),10)+d;if(n<130)n=130;if(n>250)n=250;setStore("clockSize",""+n);applyClockStyle();showControls()}
+function setClockFont(v){setStore("clockFont",v);applyClockStyle();showControls()}
+function applyClockStyle(){var c=document.getElementById("clockCenter"),b=document.getElementById("bigClock"),col=getStore("clockColor","#ffffff"),f=getStore("clockFont","helvetica"),n=parseInt(getStore("clockSize","210"),10),ff='"Helvetica Neue",Helvetica,Arial,sans-serif';
+if(f=="arial")ff="Arial,sans-serif";else if(f=="georgia")ff="Georgia,serif";else if(f=="times")ff='"Times New Roman",Times,serif';else if(f=="courier")ff='"Courier New",Courier,monospace';else if(f=="trebuchet")ff='"Trebuchet MS",Arial,sans-serif';
+c.style.color=col;b.style.fontFamily=ff;b.style.fontSize=n+"px";b.style.lineHeight=(n+5)+"px";document.getElementById("fontPicker").value=f}
+function updateBig(){var d=new Date();document.getElementById("bigClock").innerHTML=pad(d.getHours())+":"+pad(d.getMinutes());document.getElementById("bigDate").innerHTML=DAYS[d.getDay()]+" · "+d.getDate()+". "+MONTHS[d.getMonth()]+" · KW "+week(d);
+if(dashboardData){var c=getCity(),x=dashboardData.cities[c],name=c=="frankfurt"?"Frankfurt":"Köln";if(x)document.getElementById("bigWeather").innerHTML=name+" · "+Math.round(x.weather.current)+"° · "+x.weather.text}applyClockStyle()}
+var note=document.getElementById("note");note.value=getStore("deskNote","");note.onkeyup=note.onchange=function(){setStore("deskNote",note.value)};
+calendar();tick();load();setInterval(load,1800000);setInterval(applyTheme,60000);
 </script>
-<div id="clockMode" onclick="clockTap(event)">
- <div id="bigClockWrap">
-  <div id="bigClock">--:--</div>
-  <div id="bigDate"></div><div id="bigWeather"></div>
- </div>
- <div id="clockControls">
-  <span class="colorDot" style="background:#ffffff" onclick="setClockColor('#ffffff');event.stopPropagation()"></span>
-  <span class="colorDot" style="background:#39ff72" onclick="setClockColor('#39ff72');event.stopPropagation()"></span>
-  <span class="colorDot" style="background:#48a7ff" onclick="setClockColor('#48a7ff');event.stopPropagation()"></span>
-  <span class="colorDot" style="background:#ff4b4b" onclick="setClockColor('#ff4b4b');event.stopPropagation()"></span>
-  <span class="colorDot" style="background:#ffb13b" onclick="setClockColor('#ffb13b');event.stopPropagation()"></span>
-  <span class="colorDot" style="background:#d17cff" onclick="setClockColor('#d17cff');event.stopPropagation()"></span>
-  <span class="sizeCtl" onclick="changeClockSize(-10);event.stopPropagation()">A−</span>
-  <span class="sizeCtl" onclick="changeClockSize(10);event.stopPropagation()">A+</span>
-  <select id="fontPicker" onchange="setClockFont(this.value);event.stopPropagation()" onclick="event.stopPropagation()">
-   <option value="helvetica">Helvetica</option>
-   <option value="arial">Arial</option>
-   <option value="georgia">Georgia</option>
-   <option value="times">Times</option>
-   <option value="courier">Digital / Courier</option>
-   <option value="trebuchet">Trebuchet</option>
-  </select>
-  <span id="closeClock" onclick="closeClock();event.stopPropagation()">Dashboard</span>
- </div>
-</div>
-
 </body></html>
