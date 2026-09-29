@@ -46,54 +46,62 @@ body.light .modeBtn{background:#fff;color:#111;border-color:#ccc}
 .lightClock #fontPicker{background:#fff;color:#111;border-color:#bbb}
 @media (max-width:800px){#bigClock{font-size:165px;line-height:170px}}
 
+
+.themeBtns{position:absolute;right:112px;bottom:12px;z-index:6}
+.themeBtns button{margin-left:4px;border:1px solid #3b3e44;background:#17191d;color:#fff;border-radius:8px;padding:7px 9px;font-size:12px}
+body.light .themeBtns button{background:#fff;color:#111;border-color:#ccc}
+.left{width:55%}.right{width:45%}
+.noteLabel{margin-top:28px}
+textarea{height:105px}
+
+.citySwitch{margin-bottom:3px}.citySwitch button{border:1px solid #3b3e44;background:#17191d;color:#aaa;border-radius:7px;padding:4px 7px;margin-left:4px;font-size:10px}
+.citySwitch button.active{color:#fff;border-color:#777}
+body.light .citySwitch button{background:#fff;color:#777;border-color:#ccc}body.light .citySwitch button.active{color:#111;border-color:#777}
+#bigWeather{font-size:18px;margin-top:12px;opacity:.72}
+.sizeCtl{display:inline-block;padding:7px 9px;margin-left:5px;border:1px solid #555;border-radius:8px;font-size:12px}
 </style>
 </head>
 <body><div class="app">
-<div class="head"><div id="clock">--:--</div><button class="modeBtn" onclick="openClock()">Große Uhr</button><div class="date" id="dateLine"></div>
-<div class="weather"><div id="temp">--°</div><div class="sub" id="weatherText">Köln · lädt…</div></div></div>
+<div class="head"><div id="clock">--:--</div><button class="modeBtn" onclick="openClock()">Große Uhr</button><div class="themeBtns"><button onclick="setThemeMode('light')">☀</button><button onclick="setThemeMode('dark')">☾</button><button onclick="setThemeMode('auto')">A</button></div><div class="date" id="dateLine"></div>
+<div class="weather"><div class="citySwitch"><button id="cityKoeln" onclick="setCity('koeln')">Köln</button><button id="cityFrankfurt" onclick="setCity('frankfurt')">Frankfurt</button></div><div id="temp">--°</div><div class="sub" id="weatherText">Wetter lädt…</div></div></div>
 <div class="cols">
 <div class="col left">
-<div class="label">Wetter · Köln</div><div class="forecast" id="forecast"></div>
-<div class="label">Nächstes Gebet</div><div class="prayerHero"><div id="nextPrayer">–</div><div id="countdown"></div></div>
-<table class="prayers" id="prayers"></table>
+<div class="label" id="weatherLabel">Wetter</div><div class="forecast" id="forecast"></div>
 <div class="label noteLabel">Heute wichtig</div><textarea id="note" placeholder="Kurze Notiz …"></textarea>
 </div>
 <div class="col right"><div class="label">Kalender</div><div class="calTitle" id="monthTitle"></div>
 <table class="cal"><thead><tr><th>MO</th><th>DI</th><th>MI</th><th>DO</th><th>FR</th><th>SA</th><th>SO</th></tr></thead><tbody id="calBody"></tbody></table>
 </div></div><div class="foot" id="updated"></div></div>
-<script id="embeddedDashboardData">var DASHBOARD_DATA={"updated":"29.09. 23:41","weather":{"current":21.9,"text":"Überwiegend klar","days":[{"name":"Heute","max":27.2,"min":18.6,"rain":0},{"name":"Morgen","max":28.5,"min":20.1,"rain":20},{"name":"Übermorgen","max":21.5,"min":15.7,"rain":80}]},"prayers":{"items":[{"name":"Fajr","time":"05:38"},{"name":"Dhuhr","time":"13:22"},{"name":"Asr","time":"16:33"},{"name":"Maghrib","time":"19:15"},{"name":"Isha","time":"20:59"}]},"sun":{"sunrise":"07:29","sunset":"19:14"}};</script>
+<script id="embeddedDashboardData">var DASHBOARD_DATA=null;</script>
 <script>
 var DAYS=["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"],MONTHS=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 function pad(n){return n<10?"0"+n:n} function wk(d){var x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()+3-(x.getDay()+6)%7);var w=new Date(x.getFullYear(),0,4);return 1+Math.round(((x-w)/86400000-3+(w.getDay()+6)%7)/7)}
-function tick(){var d=new Date();document.getElementById("clock").innerHTML=pad(d.getHours())+":"+pad(d.getMinutes());document.getElementById("dateLine").innerHTML=DAYS[d.getDay()]+" · "+d.getDate()+". "+MONTHS[d.getMonth()]+" "+d.getFullYear()+" · KW "+wk(d);nextPrayer()}
+function tick(){var d=new Date();document.getElementById("clock").innerHTML=pad(d.getHours())+":"+pad(d.getMinutes());document.getElementById("dateLine").innerHTML=DAYS[d.getDay()]+" · "+d.getDate()+". "+MONTHS[d.getMonth()]+" "+d.getFullYear()+" · KW "+wk(d)}
 setInterval(tick,1000);tick();
 function cal(){var d=new Date(),y=d.getFullYear(),m=d.getMonth(),f=new Date(y,m,1),o=(f.getDay()+6)%7,n=1,nx=1,prev=new Date(y,m,0).getDate(),max=new Date(y,m+1,0).getDate(),s="";
 document.getElementById("monthTitle").innerHTML=MONTHS[m]+" "+y;for(var r=0;r<6;r++){s+="<tr>";for(var c=0;c<7;c++){var p=r*7+c,v,cl="";if(p<o){v=prev-o+p+1;cl="dim"}else if(n<=max){v=n;if(n==d.getDate())cl="today";n++}else{v=nx++;cl="dim"}s+='<td class="'+cl+'"><span>'+v+"</span></td>"}s+="</tr>"}document.getElementById("calBody").innerHTML=s}cal();
-var prayerData=null;
 function xhrJSON(url,ok,fail){var x=new XMLHttpRequest();x.onreadystatechange=function(){if(x.readyState==4){if(x.status>=200&&x.status<300){try{ok(JSON.parse(x.responseText))}catch(e){if(fail)fail()}}else if(fail)fail()}};x.open("GET",url+"?v="+new Date().getTime(),true);x.send()}
+var dashboardData=null;
+function getCity(){var c="koeln";try{c=localStorage.getItem("weatherCity")||c}catch(e){}return c}
+function setCity(c){try{localStorage.setItem("weatherCity",c)}catch(e){};renderSelectedCity()}
+function renderSelectedCity(){
+ if(!dashboardData)return;
+ var c=getCity(),j=dashboardData.cities[c],name=c=="frankfurt"?"Frankfurt":"Köln";
+ if(!j)return;
+ document.getElementById("temp").innerHTML=Math.round(j.weather.current)+"°";
+ document.getElementById("weatherText").innerHTML=name+" · "+j.weather.text;
+ document.getElementById("weatherLabel").innerHTML="Wetter · "+name;
+ var s="",i,q;
+ for(i=0;i<j.weather.days.length;i++){q=j.weather.days[i];s+='<div class="day"><span>'+q.name+'</span><b>'+Math.round(q.max)+'°</b><div class="sub">'+Math.round(q.min)+'° · Regen '+q.rain+'%</div></div>'}
+ document.getElementById("forecast").innerHTML=s;
+ sunData=j.sun||null;
+ document.getElementById("updated").innerHTML="Daten: "+dashboardData.updated;
+ document.getElementById("cityKoeln").className=c=="koeln"?"active":"";
+ document.getElementById("cityFrankfurt").className=c=="frankfurt"?"active":"";
+ applyAutoTheme();updateBigClock();
+}
 function renderDashboardData(j){
- try{
-  if(!j||!j.weather||!j.prayers)return false;
-  document.getElementById("temp").innerHTML=Math.round(j.weather.current)+"°";
-  document.getElementById("weatherText").innerHTML="Köln · "+j.weather.text;
-  var s="",i,q;
-  for(i=0;i<j.weather.days.length;i++){
-   q=j.weather.days[i];
-   s+='<div class="day"><span>'+q.name+'</span><b>'+Math.round(q.max)+'°</b><div class="sub">'+Math.round(q.min)+'° · Regen '+q.rain+'%</div></div>';
-  }
-  document.getElementById("forecast").innerHTML=s;
-  prayerData=j.prayers;
-  sunData=j.sun||null;
-  var ps="",k;
-  for(k=0;k<prayerData.items.length;k++){
-   ps+="<tr><td>"+prayerData.items[k].name+"</td><td>"+prayerData.items[k].time+"</td></tr>";
-  }
-  document.getElementById("prayers").innerHTML=ps;
-  document.getElementById("updated").innerHTML="Daten: "+j.updated;
-  applyAutoTheme();
-  nextPrayer();
-  return true;
- }catch(e){return false}
+ try{if(!j||!j.cities)return false;dashboardData=j;renderSelectedCity();return true}catch(e){return false}
 }
 function load(){
  if(typeof DASHBOARD_DATA!="undefined" && DASHBOARD_DATA){
@@ -102,26 +110,11 @@ function load(){
  }
  xhrJSON("data.json",function(j){renderDashboardData(j)},function(){
   document.getElementById("weatherText").innerHTML="Köln · Daten nicht geladen";
-  document.getElementById("nextPrayer").innerHTML="Daten nicht geladen";
  });
 }
 load();
 setInterval(load,1800000);
-function nextPrayer(){if(!prayerData)return;var d=new Date(),now=d.getHours()*60+d.getMinutes(),it=prayerData.items,next=null,mins=0;for(var i=0;i<it.length;i++){var a=it[i].time.split(":"),t=parseInt(a[0],10)*60+parseInt(a[1],10);if(t>now){next=it[i];mins=t-now;break}}if(!next){next=it[0];var a=next.time.split(":"),t=parseInt(a[0],10)*60+parseInt(a[1],10);mins=1440-now+t}
-document.getElementById("nextPrayer").innerHTML=next.name+" · "+next.time;document.getElementById("countdown").innerHTML="in "+Math.floor(mins/60)+" Std. "+(mins%60)+" Min."}
-var note=document.getElementById("note");try{note.value=localStorage.getItem("deskNote")||""}catch(e){};note.onkeyup=note.onchange=function(){try{localStorage.setItem("deskNote",note.value)}catch(e){}};
 
-var sunData=null;
-function openClock(){document.getElementById("clockMode").style.display="block";updateBigClock();applyAutoTheme()}
-function closeClock(){document.getElementById("clockMode").style.display="none"}
-function clockTap(e){ /* one tap on empty clock area exits */ closeClock() }
-function setClockColor(c){try{localStorage.setItem("clockColor",c)}catch(e){};applyClockColor()}
-function applyClockColor(){var c="#ffffff";try{c=localStorage.getItem("clockColor")||c}catch(e){};document.getElementById("bigClockWrap").style.color=c}
-
-function setClockFont(v){
- try{localStorage.setItem("clockFont",v)}catch(e){}
- applyClockFont();
-}
 function applyClockFont(){
  var v="helvetica";
  try{v=localStorage.getItem("clockFont")||v}catch(e){}
@@ -140,20 +133,34 @@ function updateBigClock(){
  var d=new Date();
  document.getElementById("bigClock").innerHTML=pad(d.getHours())+":"+pad(d.getMinutes());
  document.getElementById("bigDate").innerHTML=DAYS[d.getDay()]+" · "+d.getDate()+". "+MONTHS[d.getMonth()]+" "+d.getFullYear();
- var np=document.getElementById("nextPrayer");
- document.getElementById("bigPrayer").innerHTML=np&&np.innerHTML!="–"?"Nächstes Gebet · "+np.innerHTML:"";
- applyClockColor();applyClockFont();
+ 
+ var bw=document.getElementById("bigWeather");
+ if(bw&&dashboardData){var c=getCity(),x=dashboardData.cities[c],nm=c=="frankfurt"?"Frankfurt":"Köln";if(x)bw.innerHTML=nm+" · "+Math.round(x.weather.current)+"° · "+x.weather.text}
+ applyClockColor();applyClockFont();applyClockSize();
 }
 setInterval(updateBigClock,1000);updateBigClock();
 
 function toMinutes(v){if(!v)return null;var a=v.split(":");return parseInt(a[0],10)*60+parseInt(a[1],10)}
+function setThemeMode(v){
+ try{localStorage.setItem("themeMode",v)}catch(e){}
+ applyAutoTheme();
+}
 function applyAutoTheme(){
- if(!sunData)return;
- var d=new Date(),now=d.getHours()*60+d.getMinutes(),rise=toMinutes(sunData.sunrise),set=toMinutes(sunData.sunset);
- var night=(now<rise || now>=set);
- document.body.className=night?"":"light";
+ var mode="auto";
+ try{mode=localStorage.getItem("themeMode")||"auto"}catch(e){}
+ var light=false;
+ if(mode=="light")light=true;
+ else if(mode=="dark")light=false;
+ else{
+  if(!sunData){light=true}
+  else{
+   var d=new Date(),now=d.getHours()*60+d.getMinutes(),rise=toMinutes(sunData.sunrise),set=toMinutes(sunData.sunset);
+   light=!(now<rise || now>=set);
+  }
+ }
+ document.body.className=light?"light":"";
  var cm=document.getElementById("clockMode");
- if(cm)cm.className=night?"":"lightClock";
+ if(cm)cm.className=light?"lightClock":"";
 }
 setInterval(applyAutoTheme,60000);
 
@@ -161,8 +168,7 @@ setInterval(applyAutoTheme,60000);
 <div id="clockMode" onclick="clockTap(event)">
  <div id="bigClockWrap">
   <div id="bigClock">--:--</div>
-  <div id="bigDate"></div>
-  <div id="bigPrayer"></div>
+  <div id="bigDate"></div><div id="bigWeather"></div>
  </div>
  <div id="clockControls">
   <span class="colorDot" style="background:#ffffff" onclick="setClockColor('#ffffff');event.stopPropagation()"></span>
@@ -171,6 +177,8 @@ setInterval(applyAutoTheme,60000);
   <span class="colorDot" style="background:#ff4b4b" onclick="setClockColor('#ff4b4b');event.stopPropagation()"></span>
   <span class="colorDot" style="background:#ffb13b" onclick="setClockColor('#ffb13b');event.stopPropagation()"></span>
   <span class="colorDot" style="background:#d17cff" onclick="setClockColor('#d17cff');event.stopPropagation()"></span>
+  <span class="sizeCtl" onclick="changeClockSize(-10);event.stopPropagation()">A−</span>
+  <span class="sizeCtl" onclick="changeClockSize(10);event.stopPropagation()">A+</span>
   <select id="fontPicker" onchange="setClockFont(this.value);event.stopPropagation()" onclick="event.stopPropagation()">
    <option value="helvetica">Helvetica</option>
    <option value="arial">Arial</option>
