@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Wetter und Gebetszeiten laden
+      - name: Wetterdaten laden
         run: python update_data.py
 
       - name: Neue Daten speichern
