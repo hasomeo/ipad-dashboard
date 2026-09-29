@@ -32,14 +32,19 @@ body.light .prayers td{border-color:#ddd}
 body.light .modeBtn{background:#fff;color:#111;border-color:#ccc}
 #clockMode{display:none;position:fixed;left:0;top:0;width:100%;height:100%;z-index:50;background:#08090a;text-align:center}
 #clockMode.lightClock{background:#f7f7f7}
-#bigClockWrap{position:absolute;left:0;top:50%;width:100%;margin-top:-115px}
-#bigClock{font-size:150px;font-weight:200;letter-spacing:-7px;line-height:155px}
+#bigClockWrap{position:absolute;left:0;top:50%;width:100%;margin-top:-145px}
+#bigClock{font-size:190px;font-weight:200;letter-spacing:-8px;line-height:195px;white-space:nowrap}
 #bigDate{font-size:24px;margin-top:8px;opacity:.72}
 #bigPrayer{font-size:18px;margin-top:16px;opacity:.72}
 #clockControls{position:absolute;left:0;bottom:22px;width:100%;text-align:center}
 .colorDot{display:inline-block;width:27px;height:27px;border-radius:50%;margin:0 6px;border:2px solid rgba(255,255,255,.45);vertical-align:middle}
 .lightClock .colorDot{border-color:rgba(0,0,0,.25)}
 #closeClock{display:inline-block;margin-left:14px;padding:7px 11px;border:1px solid #555;border-radius:8px;font-size:12px;opacity:.8}
+
+
+#fontPicker{display:inline-block;margin-left:12px;padding:7px 9px;border:1px solid #555;border-radius:8px;background:#17191d;color:#fff;font-size:12px}
+.lightClock #fontPicker{background:#fff;color:#111;border-color:#bbb}
+@media (max-width:800px){#bigClock{font-size:165px;line-height:170px}}
 
 </style>
 </head>
@@ -56,6 +61,7 @@ body.light .modeBtn{background:#fff;color:#111;border-color:#ccc}
 <div class="col right"><div class="label">Kalender</div><div class="calTitle" id="monthTitle"></div>
 <table class="cal"><thead><tr><th>MO</th><th>DI</th><th>MI</th><th>DO</th><th>FR</th><th>SA</th><th>SO</th></tr></thead><tbody id="calBody"></tbody></table>
 </div></div><div class="foot" id="updated"></div></div>
+<script id="embeddedDashboardData">var DASHBOARD_DATA=null;</script>
 <script>
 var DAYS=["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"],MONTHS=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 function pad(n){return n<10?"0"+n:n} function wk(d){var x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()+3-(x.getDay()+6)%7);var w=new Date(x.getFullYear(),0,4);return 1+Math.round(((x-w)/86400000-3+(w.getDay()+6)%7)/7)}
@@ -65,12 +71,42 @@ function cal(){var d=new Date(),y=d.getFullYear(),m=d.getMonth(),f=new Date(y,m,
 document.getElementById("monthTitle").innerHTML=MONTHS[m]+" "+y;for(var r=0;r<6;r++){s+="<tr>";for(var c=0;c<7;c++){var p=r*7+c,v,cl="";if(p<o){v=prev-o+p+1;cl="dim"}else if(n<=max){v=n;if(n==d.getDate())cl="today";n++}else{v=nx++;cl="dim"}s+='<td class="'+cl+'"><span>'+v+"</span></td>"}s+="</tr>"}document.getElementById("calBody").innerHTML=s}cal();
 var prayerData=null;
 function xhrJSON(url,ok,fail){var x=new XMLHttpRequest();x.onreadystatechange=function(){if(x.readyState==4){if(x.status>=200&&x.status<300){try{ok(JSON.parse(x.responseText))}catch(e){if(fail)fail()}}else if(fail)fail()}};x.open("GET",url+"?v="+new Date().getTime(),true);x.send()}
-function load(){xhrJSON("data.json",function(j){
- document.getElementById("temp").innerHTML=Math.round(j.weather.current)+"°";document.getElementById("weatherText").innerHTML="Köln · "+j.weather.text;
- var s="";for(var i=0;i<j.weather.days.length;i++){var q=j.weather.days[i];s+='<div class="day"><span>'+q.name+'</span><b>'+Math.round(q.max)+'°</b><div class="sub">'+Math.round(q.min)+'° · Regen '+q.rain+'%</div></div>'}document.getElementById("forecast").innerHTML=s;
- prayerData=j.prayers; sunData=j.sun||null; applyAutoTheme();var ps="";for(var k=0;k<prayerData.items.length;k++){ps+="<tr><td>"+prayerData.items[k].name+"</td><td>"+prayerData.items[k].time+"</td></tr>"}document.getElementById("prayers").innerHTML=ps;
- document.getElementById("updated").innerHTML="Daten: "+j.updated;nextPrayer();
- },function(){document.getElementById("weatherText").innerHTML="Köln · Daten nicht geladen";document.getElementById("nextPrayer").innerHTML="Daten nicht geladen"})}load();setInterval(load,1800000);
+function renderDashboardData(j){
+ try{
+  if(!j||!j.weather||!j.prayers)return false;
+  document.getElementById("temp").innerHTML=Math.round(j.weather.current)+"°";
+  document.getElementById("weatherText").innerHTML="Köln · "+j.weather.text;
+  var s="",i,q;
+  for(i=0;i<j.weather.days.length;i++){
+   q=j.weather.days[i];
+   s+='<div class="day"><span>'+q.name+'</span><b>'+Math.round(q.max)+'°</b><div class="sub">'+Math.round(q.min)+'° · Regen '+q.rain+'%</div></div>';
+  }
+  document.getElementById("forecast").innerHTML=s;
+  prayerData=j.prayers;
+  sunData=j.sun||null;
+  var ps="",k;
+  for(k=0;k<prayerData.items.length;k++){
+   ps+="<tr><td>"+prayerData.items[k].name+"</td><td>"+prayerData.items[k].time+"</td></tr>";
+  }
+  document.getElementById("prayers").innerHTML=ps;
+  document.getElementById("updated").innerHTML="Daten: "+j.updated;
+  applyAutoTheme();
+  nextPrayer();
+  return true;
+ }catch(e){return false}
+}
+function load(){
+ if(typeof DASHBOARD_DATA!="undefined" && DASHBOARD_DATA){
+  renderDashboardData(DASHBOARD_DATA);
+  return;
+ }
+ xhrJSON("data.json",function(j){renderDashboardData(j)},function(){
+  document.getElementById("weatherText").innerHTML="Köln · Daten nicht geladen";
+  document.getElementById("nextPrayer").innerHTML="Daten nicht geladen";
+ });
+}
+load();
+setInterval(load,1800000);
 function nextPrayer(){if(!prayerData)return;var d=new Date(),now=d.getHours()*60+d.getMinutes(),it=prayerData.items,next=null,mins=0;for(var i=0;i<it.length;i++){var a=it[i].time.split(":"),t=parseInt(a[0],10)*60+parseInt(a[1],10);if(t>now){next=it[i];mins=t-now;break}}if(!next){next=it[0];var a=next.time.split(":"),t=parseInt(a[0],10)*60+parseInt(a[1],10);mins=1440-now+t}
 document.getElementById("nextPrayer").innerHTML=next.name+" · "+next.time;document.getElementById("countdown").innerHTML="in "+Math.floor(mins/60)+" Std. "+(mins%60)+" Min."}
 var note=document.getElementById("note");try{note.value=localStorage.getItem("deskNote")||""}catch(e){};note.onkeyup=note.onchange=function(){try{localStorage.setItem("deskNote",note.value)}catch(e){}};
@@ -81,13 +117,32 @@ function closeClock(){document.getElementById("clockMode").style.display="none"}
 function clockTap(e){ /* one tap on empty clock area exits */ closeClock() }
 function setClockColor(c){try{localStorage.setItem("clockColor",c)}catch(e){};applyClockColor()}
 function applyClockColor(){var c="#ffffff";try{c=localStorage.getItem("clockColor")||c}catch(e){};document.getElementById("bigClockWrap").style.color=c}
+
+function setClockFont(v){
+ try{localStorage.setItem("clockFont",v)}catch(e){}
+ applyClockFont();
+}
+function applyClockFont(){
+ var v="helvetica";
+ try{v=localStorage.getItem("clockFont")||v}catch(e){}
+ var f='"Helvetica Neue",Helvetica,Arial,sans-serif';
+ if(v=="arial")f='Arial,sans-serif';
+ else if(v=="georgia")f='Georgia,serif';
+ else if(v=="times")f='"Times New Roman",Times,serif';
+ else if(v=="courier")f='"Courier New",Courier,monospace';
+ else if(v=="trebuchet")f='"Trebuchet MS",Arial,sans-serif';
+ document.getElementById("bigClock").style.fontFamily=f;
+ var picker=document.getElementById("fontPicker");
+ if(picker)picker.value=v;
+}
+
 function updateBigClock(){
  var d=new Date();
  document.getElementById("bigClock").innerHTML=pad(d.getHours())+":"+pad(d.getMinutes());
  document.getElementById("bigDate").innerHTML=DAYS[d.getDay()]+" · "+d.getDate()+". "+MONTHS[d.getMonth()]+" "+d.getFullYear();
  var np=document.getElementById("nextPrayer");
  document.getElementById("bigPrayer").innerHTML=np&&np.innerHTML!="–"?"Nächstes Gebet · "+np.innerHTML:"";
- applyClockColor();
+ applyClockColor();applyClockFont();
 }
 setInterval(updateBigClock,1000);updateBigClock();
 
@@ -116,6 +171,14 @@ setInterval(applyAutoTheme,60000);
   <span class="colorDot" style="background:#ff4b4b" onclick="setClockColor('#ff4b4b');event.stopPropagation()"></span>
   <span class="colorDot" style="background:#ffb13b" onclick="setClockColor('#ffb13b');event.stopPropagation()"></span>
   <span class="colorDot" style="background:#d17cff" onclick="setClockColor('#d17cff');event.stopPropagation()"></span>
+  <select id="fontPicker" onchange="setClockFont(this.value);event.stopPropagation()" onclick="event.stopPropagation()">
+   <option value="helvetica">Helvetica</option>
+   <option value="arial">Arial</option>
+   <option value="georgia">Georgia</option>
+   <option value="times">Times</option>
+   <option value="courier">Digital / Courier</option>
+   <option value="trebuchet">Trebuchet</option>
+  </select>
   <span id="closeClock" onclick="closeClock();event.stopPropagation()">Dashboard</span>
  </div>
 </div>
